@@ -117,6 +117,14 @@ class ChatController extends Controller
             . "not even a plausible-sounding general answer. If in doubt, say you don't know rather than answer approximately.\n\n"
             . $context;
 
+        // No API key configured: do not call the API (the widget is hidden in this case too)
+        if (! config('services.anthropic.api_key')) {
+            return response()->json([
+                'session_id' => $sessionId,
+                'reply' => "The chat assistant is not available. Please contact the school directly" . ($phone ? " at {$phone}" : '') . '.',
+            ], 200);
+        }
+
         $response = Http::withHeaders([
             'x-api-key'         => config('services.anthropic.api_key'),
             'anthropic-version' => '2023-06-01',

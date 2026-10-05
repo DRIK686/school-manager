@@ -107,6 +107,8 @@
         </form>
     </div>
 </div>
+@if(config('services.anthropic.api_key'))
 @include('website.partials.chatbot')
+@endif
 </body>
 </html>

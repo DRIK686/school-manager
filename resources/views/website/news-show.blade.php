@@ -96,6 +96,8 @@
 <footer class="py-8 text-center text-xs text-gray-400" style="background:var(--primary)">
     <p class="text-white/60">© {{ date('Y') }} {{ $school->school_name }}. All rights reserved.</p>
 </footer>
+@if(config('services.anthropic.api_key'))
 @include('website.partials.chatbot')
+@endif
 </body>
 </html>
