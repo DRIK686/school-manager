@@ -18,6 +18,7 @@
         .btn-primary:hover { background-color: var(--primary-dark); }
         .checkbox-primary:checked { background-color: var(--primary); border-color: var(--primary); }
     </style>
+@include('partials.favicon')
 </head>
 <body class="min-h-screen flex items-center justify-center p-4"
       style="background: linear-gradient(135deg, {{ $school->theme_color ?? '#0f766e' }}15 0%, {{ $school->accent_color ?? '#14b8a6' }}15 100%)">

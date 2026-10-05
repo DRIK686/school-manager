@@ -41,6 +41,7 @@
         /* Welcome banner */
         .welcome-banner { background: linear-gradient(135deg, var(--sidebar-bg), var(--accent)); }
     </style>
+@include('partials.favicon')
 </head>
 <body class="bg-gray-100 font-sans">
 

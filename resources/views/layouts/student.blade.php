@@ -12,6 +12,7 @@
 .sidebar-link { display:flex;align-items:center;gap:10px;padding:9px 16px;border-radius:8px;font-size:14px;color:rgba(255,255,255,0.75);transition:all .15s; }
 .sidebar-link:hover,.sidebar-link.active { background:rgba(255,255,255,0.15);color:#fff; }
 </style>
+@include('partials.favicon')
 </head>
 <body class="bg-gray-50" x-data="{open:false}">
 <div x-show="open" @click="open=false" class="fixed inset-0 bg-black/40 z-20 lg:hidden" x-cloak></div>

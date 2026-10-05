@@ -14,6 +14,7 @@
 .btn-primary { background-color: var(--primary); color: white; padding: 12px 28px; border-radius: 50px; font-weight: 700; display: inline-block; }
 [x-cloak] { display: none !important; }
 </style>
+@include('partials.favicon')
 </head>
 <body class="bg-gray-50" x-data="{ open: null }">
 <nav class="bg-white shadow-sm px-6 py-4 flex items-center justify-between">

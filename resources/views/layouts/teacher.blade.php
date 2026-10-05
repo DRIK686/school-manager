@@ -23,6 +23,7 @@
     background:rgba(255,255,255,0.15); color:#fff;
 }
 </style>
+@include('partials.favicon')
 </head>
 <body class="bg-gray-50 text-gray-800" x-data="{ sidebarOpen: false }">
 

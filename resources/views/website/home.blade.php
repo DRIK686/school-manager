@@ -63,6 +63,7 @@
 nav a { transition: color 0.15s; }
 [x-cloak] { display: none !important; }
 </style>
+@include('partials.favicon')
 </head>
 <body class="bg-white" x-data="{ mobileOpen: false }">
 

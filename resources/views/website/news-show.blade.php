@@ -18,6 +18,7 @@
 .article-body h3 { font-size: 1.1rem; font-weight: 700; margin: 1rem 0 0.5rem; color: #1f2937; }
 [x-cloak] { display: none !important; }
 </style>
+@include('partials.favicon')
 </head>
 <body class="bg-gray-50">
 

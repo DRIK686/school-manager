@@ -23,6 +23,7 @@ th { background: #7f1d1d; color: white; font-size: 11px; }
     body { padding: 10px; }
 }
 </style>
+@include('partials.favicon')
 </head>
 <body>
 

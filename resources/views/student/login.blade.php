@@ -6,6 +6,7 @@
 <title>Student Login — {{ $school->school_name ?? 'SchoolManager' }}</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>:root{--sidebar-bg:{{ $school->sidebar_color ?? '#7f1d1d' }};}</style>
+@include('partials.favicon')
 </head>
 <body class="min-h-screen bg-gray-50 flex items-center justify-center p-4">
 <div class="w-full max-w-sm">
