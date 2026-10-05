@@ -16,6 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'role'         => \App\Http\Middleware\RoleMiddleware::class,
         ]);
         $middleware->prepend(\App\Http\Middleware\RedirectLegacyManageDomain::class);
+        // Logged-in users who open /login etc. go to their own dashboard (same rule as LoginController)
+        $middleware->redirectUsersTo(fn () => auth()->user()?->hasRole('teacher')
+            ? route('teacher.dashboard')
+            : route('admin.dashboard'));
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

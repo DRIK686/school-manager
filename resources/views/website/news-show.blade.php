@@ -9,7 +9,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root { --primary: {{ $ws->get('primary_color','#0f766e') }}; --secondary: {{ $ws->get('secondary_color','#fbbf24') }}; }
+:root { --primary: {{ $ws->get('primary_color','#0f766e') }}; --secondary: {{ $ws->get('secondary_color','#14b8a6') }}; }
 * { font-family: 'Nunito', sans-serif; }
 .text-primary { color: var(--primary); }
 .bg-primary { background-color: var(--primary); }

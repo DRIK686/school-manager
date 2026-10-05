@@ -826,9 +826,9 @@
                 <div>
                     <label class="block text-xs font-medium text-gray-600 mb-1">Primary Colour</label>
                     <div class="flex items-center gap-3">
-                        <input type="color" name="primary_color" value="{{ \App\Models\WebsiteSetting::get('primary_color','#7f1d1d') }}"
+                        <input type="color" name="primary_color" value="{{ \App\Models\WebsiteSetting::get('primary_color','#0f766e') }}"
                                class="h-10 w-16 rounded cursor-pointer border border-gray-200">
-                        <input type="text" id="primary_color_text" value="{{ \App\Models\WebsiteSetting::get('primary_color','#7f1d1d') }}"
+                        <input type="text" id="primary_color_text" value="{{ \App\Models\WebsiteSetting::get('primary_color','#0f766e') }}"
                                class="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none font-mono"
                                oninput="document.querySelector('[name=primary_color]').value=this.value">
                     </div>
@@ -837,9 +837,9 @@
                 <div>
                     <label class="block text-xs font-medium text-gray-600 mb-1">Secondary / Accent Colour</label>
                     <div class="flex items-center gap-3">
-                        <input type="color" name="secondary_color" value="{{ \App\Models\WebsiteSetting::get('secondary_color','#fbbf24') }}"
+                        <input type="color" name="secondary_color" value="{{ \App\Models\WebsiteSetting::get('secondary_color','#14b8a6') }}"
                                class="h-10 w-16 rounded cursor-pointer border border-gray-200">
-                        <input type="text" value="{{ \App\Models\WebsiteSetting::get('secondary_color','#fbbf24') }}"
+                        <input type="text" value="{{ \App\Models\WebsiteSetting::get('secondary_color','#14b8a6') }}"
                                class="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none font-mono"
                                oninput="document.querySelector('[name=secondary_color]').value=this.value">
                     </div>
@@ -853,16 +853,23 @@
                     </select>
                     <p class="text-xs text-gray-400 mt-1">Hides all "Apply Now" buttons across the site</p>
                 </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Gradient End Colour</label>
+                    <input type="text" name="gradient_end_color" value="{{ \App\Models\WebsiteSetting::get('gradient_end_color','') }}"
+                           placeholder="Automatic" maxlength="7" pattern="#[0-9a-fA-F]{6}"
+                           class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none font-mono">
+                    <p class="text-xs text-gray-400 mt-1">Darker end of the hero and highlight sections. Leave empty for an automatic shade of the primary colour. Format: #450a0a</p>
+                </div>
             </div>
             <div class="bg-gray-50 rounded-xl p-4">
                 <p class="text-xs font-semibold text-gray-600 mb-2">Live Preview</p>
                 <div class="flex gap-3 items-center">
                     <div class="h-10 w-10 rounded-full" id="preview-primary"
-                         style="background:{{ \App\Models\WebsiteSetting::get('primary_color','#7f1d1d') }}"></div>
+                         style="background:{{ \App\Models\WebsiteSetting::get('primary_color','#0f766e') }}"></div>
                     <div class="h-10 w-10 rounded-full" id="preview-secondary"
-                         style="background:{{ \App\Models\WebsiteSetting::get('secondary_color','#fbbf24') }}"></div>
+                         style="background:{{ \App\Models\WebsiteSetting::get('secondary_color','#14b8a6') }}"></div>
                     <span class="text-sm font-bold" id="preview-text"
-                          style="color:{{ \App\Models\WebsiteSetting::get('primary_color','#7f1d1d') }}">
+                          style="color:{{ \App\Models\WebsiteSetting::get('primary_color','#0f766e') }}">
                         {{ $school->school_name }}
                     </span>
                 </div>

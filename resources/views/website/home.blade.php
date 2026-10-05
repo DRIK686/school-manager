@@ -20,6 +20,8 @@
             (int) round(hexdec(substr($hex, 2, 2)) * 0.35),
             (int) round(hexdec(substr($hex, 4, 2)) * 0.35))
         : '#052927';
+    $custom = trim((string) $ws->get('gradient_end_color', ''));
+    if (preg_match('/^#[0-9a-fA-F]{6}$/', $custom)) { $primaryDeep = $custom; }
 @endphp
     --primary:   {{ $ws->get('primary_color','#0f766e') }};
     --primary-deep: {{ $primaryDeep }};
