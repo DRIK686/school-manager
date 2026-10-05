@@ -22,6 +22,10 @@ class FeeStructure extends Model {
     }
 
     public function balanceForStudent(int $studentId): float {
-        return $this->amount - $this->totalPaidByStudent($studentId);
+        $student = \App\Models\Student::find($studentId);
+        $structs = static::where('academic_year_id', $this->academic_year_id)
+            ->where(fn($q) => $q->whereNull('class_id')->orWhere('class_id', $student?->class_id))->get();
+        $disc = \App\Services\FeeBilling::discounts($studentId, $this->academic_year_id, $structs)[$this->id] ?? 0;
+        return max(0, $this->amount - $disc - $this->totalPaidByStudent($studentId));
     }
 }

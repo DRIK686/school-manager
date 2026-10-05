@@ -133,6 +133,39 @@ Route::prefix('admin/fees')->name('admin.fees.')->middleware(['auth','role:super
 
     Route::get('/report', [App\Http\Controllers\Admin\FeeController::class, 'report'])->name('report');
     Route::get('/balance', [App\Http\Controllers\Admin\FeeController::class, 'balanceReport'])->name('balance');
+    Route::post('/payments/{payment}/void', [App\Http\Controllers\Admin\FeeController::class, 'voidPayment'])->name('void');
+    Route::get('/discounts', [App\Http\Controllers\Admin\DiscountController::class, 'index'])->name('discounts');
+    Route::post('/discounts', [App\Http\Controllers\Admin\DiscountController::class, 'store'])->name('discounts.store');
+    Route::post('/discounts/assign', [App\Http\Controllers\Admin\DiscountController::class, 'assign'])->name('discounts.assign');
+    Route::delete('/discounts/assign/{id}', [App\Http\Controllers\Admin\DiscountController::class, 'unassign'])->name('discounts.unassign');
+    Route::delete('/discounts/{id}', [App\Http\Controllers\Admin\DiscountController::class, 'destroy'])->name('discounts.destroy');
+});
+
+// Finance (accounts, expenses, cash book)
+Route::prefix('admin/finance')->name('admin.finance.')->middleware(['auth','role:super_admin,admin,accountant'])->group(function () {
+    $c = App\Http\Controllers\Admin\FinanceController::class;
+    Route::get('/', [$c, 'index'])->name('index');
+    Route::get('/accounts', [$c, 'accounts'])->name('accounts');
+    Route::post('/accounts', [$c, 'storeAccount'])->name('accounts.store');
+    Route::post('/accounts/{account}/toggle', [$c, 'toggleAccount'])->name('accounts.toggle');
+    Route::post('/accounts/{account}', [$c, 'updateAccount'])->name('accounts.update');
+    Route::post('/transfers', [$c, 'storeTransfer'])->name('transfers.store');
+    Route::post('/transfers/{transfer}/void', [$c, 'voidTransfer'])->name('transfers.void');
+    Route::get('/categories', [$c, 'categories'])->name('categories');
+    Route::post('/categories', [$c, 'storeCategory'])->name('categories.store');
+    Route::post('/categories/{category}/toggle', [$c, 'toggleCategory'])->name('categories.toggle');
+    Route::get('/transactions/{type}', [$c, 'transactions'])->where('type', 'expense|income')->name('transactions');
+    Route::post('/transactions', [$c, 'storeTransaction'])->name('transactions.store');
+    Route::post('/transactions/{transaction}/void', [$c, 'voidTransaction'])->name('transactions.void');
+    Route::get('/cashbook', [$c, 'cashbook'])->name('cashbook');
+    Route::get('/statement', [$c, 'statement'])->name('statement');
+    Route::get('/budget', [$c, 'budget'])->name('budget');
+    Route::post('/budget', [$c, 'saveBudget'])->name('budget.save');
+    Route::get('/transactions/{transaction}/voucher', [$c, 'voucher'])->name('transactions.voucher');
+    Route::post('/transactions/{transaction}/approve', [$c, 'approve'])->name('transactions.approve');
+    Route::post('/transactions/{transaction}/reject', [$c, 'reject'])->name('transactions.reject');
+    Route::post('/approval', [$c, 'setThreshold'])->name('approval');
+    Route::post('/lock', [$c, 'setLock'])->name('lock');
 });
 
 // Attendance

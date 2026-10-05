@@ -57,7 +57,7 @@
                     <p class="text-sm font-semibold text-gray-800">{{ $fee->feeCategory->name }}</p>
                     @if($fee->is_paid)
                         <span class="px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-700 rounded-full">PAID</span>
-                    @elseif($fee->balance < $fee->amount)
+                    @elseif($fee->paid_amount > 0)
                         <span class="px-2 py-0.5 text-xs font-semibold bg-yellow-100 text-yellow-700 rounded-full">PARTIAL</span>
                     @else
                         <span class="px-2 py-0.5 text-xs font-semibold bg-red-100 text-red-600 rounded-full">UNPAID</span>
@@ -65,6 +65,7 @@
                 </div>
                 <div class="flex items-center gap-4 mt-1 text-xs text-gray-500">
                     <span>Total: <strong>{{ \App\Models\SchoolSetting::current()->currency_symbol }}{{ number_format($fee->amount,2) }}</strong></span>
+                    @if($fee->discount_applied > 0)<span>Discount: <strong class="text-blue-600">-{{ \App\Models\SchoolSetting::current()->currency_symbol }}{{ number_format($fee->discount_applied,2) }}</strong></span>@endif
                     <span>Paid: <strong class="text-green-600">{{ \App\Models\SchoolSetting::current()->currency_symbol }}{{ number_format($fee->paid_amount,2) }}</strong></span>
                     <span>Balance: <strong class="text-red-600">{{ \App\Models\SchoolSetting::current()->currency_symbol }}{{ number_format($fee->balance,2) }}</strong></span>
                     @if($fee->fine_amount > 0)
