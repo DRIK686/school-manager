@@ -11,7 +11,18 @@
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <style>
 :root {
-    --primary:   {{ $ws->get('primary_color','#7f1d1d') }};
+@php
+    $hex = ltrim($ws->get('primary_color', '#0f766e'), '#');
+    if (strlen($hex) === 3) { $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2]; }
+    $primaryDeep = preg_match('/^[0-9a-fA-F]{6}$/', $hex)
+        ? sprintf('#%02x%02x%02x',
+            (int) round(hexdec(substr($hex, 0, 2)) * 0.35),
+            (int) round(hexdec(substr($hex, 2, 2)) * 0.35),
+            (int) round(hexdec(substr($hex, 4, 2)) * 0.35))
+        : '#052927';
+@endphp
+    --primary:   {{ $ws->get('primary_color','#0f766e') }};
+    --primary-deep: {{ $primaryDeep }};
     --secondary: {{ $ws->get('secondary_color','#fbbf24') }};
 }
 * { font-family: 'Nunito', sans-serif; }
@@ -120,7 +131,7 @@ nav a { transition: color 0.15s; }
 {{-- ── HERO ── --}}
 <section class="relative overflow-hidden pt-28"
          x-data="heroMedia()" x-init="init()"
-         style="background: linear-gradient(135deg, var(--primary) 0%, #450a0a 100%)">
+         style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%)">
 
     <div class="flex flex-col-reverse lg:flex-row min-h-[60vh] lg:min-h-[75vh]">
 
@@ -322,7 +333,7 @@ nav a { transition: color 0.15s; }
 
             {{-- Modal header --}}
             <div class="relative h-48 rounded-t-3xl overflow-hidden"
-                 style="background: linear-gradient(135deg, var(--primary) 0%, #450a0a 100%)">
+                 style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%)">
                 @if($ws->get('about_image'))
                 <img src="/storage/{{ $ws->get('about_image') }}"
                      class="absolute inset-0 w-full h-full object-cover opacity-30">
@@ -562,7 +573,7 @@ nav a { transition: color 0.15s; }
 
 {{-- ── TESTIMONIALS ── --}}
 @if($testimonials->count())
-<section id="testimonials" class="py-20" style="background:linear-gradient(135deg,var(--primary) 0%,#450a0a 100%)">
+<section id="testimonials" class="py-20" style="background:linear-gradient(135deg,var(--primary) 0%,var(--primary-deep) 100%)">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-14">
             <div class="text-sm font-bold text-yellow-300 uppercase tracking-widest mb-3">Testimonials</div>

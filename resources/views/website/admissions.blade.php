@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 * { font-family: 'Nunito', sans-serif; }
-:root { --primary: {{ $ws->get('primary_color','#7f1d1d') }}; }
+:root { --primary: {{ $ws->get('primary_color','#0f766e') }}; }
 .bg-primary { background-color: var(--primary); }
 .text-primary { color: var(--primary); }
 .btn-primary { background-color: var(--primary); color: white; padding: 12px 28px; border-radius: 50px; font-weight: 700; display: inline-block; }
