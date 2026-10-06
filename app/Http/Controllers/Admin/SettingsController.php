@@ -21,7 +21,7 @@ class SettingsController extends Controller
             'school_name'     => 'required|string|max:255',
             'motto'           => 'nullable|string|max:255',
             'address'         => 'nullable|string|max:500',
-            'phone'           => 'nullable|string|max:20',
+            'phone'           => 'nullable|string|max:50',
             'email'           => 'nullable|email|max:255',
             'website'         => 'nullable|string|max:255',
             'currency_symbol' => 'nullable|string|max:10',
@@ -30,6 +30,10 @@ class SettingsController extends Controller
             'accent_color'    => 'nullable|string|max:7',
             'theme_color'     => 'nullable|string|max:7',
             'logo'            => 'nullable|image|max:2048',
+        ], [
+            'logo.max'      => 'The logo must be 2 MB or smaller.',
+            'logo.image'    => 'The logo must be a JPG, PNG, GIF or WebP image (SVG is not accepted).',
+            'logo.uploaded' => 'The logo could not be uploaded. It may be too large for the server.',
         ]);
 
         $school = SchoolSetting::current();

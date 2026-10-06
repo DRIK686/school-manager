@@ -4,6 +4,12 @@
 @section('content')
 <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data">
 @csrf
+@if($errors->any())
+<div class="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+    <p class="font-semibold mb-1">Settings were not saved:</p>
+    <ul class="list-disc ml-5">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>
+</div>
+@endif
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
     {{-- LEFT: School Info --}}

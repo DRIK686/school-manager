@@ -141,18 +141,19 @@ nav a { transition: color 0.15s; }
         {{-- LEFT: Text --}}
         <div class="flex flex-col justify-center px-6 sm:px-10 lg:px-16 py-14 lg:py-24 lg:w-1/2 relative z-10">
             <div class="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-10 bg-yellow-400 -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
-            @if($school->motto)
             @php
-                $mottoParts = array_map('trim', explode('•', $school->motto));
+                $mottoParts = $school->motto ? array_map('trim', explode('•', $school->motto)) : [];
                 $mottoMain  = $mottoParts[0] ?? '';
                 $mottoRest  = array_slice($mottoParts, 1);
+                $mottoIcon  = trim((string) $ws->get('motto_icon', ''));
+                $heroBadge  = trim((string) $ws->get('hero_badge', ''));
+                if ($heroBadge === '' && $mottoMain !== '') {
+                    $heroBadge = trim($mottoIcon . ' Our Motto: ' . $mottoMain);
+                }
             @endphp
+            @if($heroBadge !== '')
             <div class="inline-flex items-center gap-2 bg-white/10 text-white text-xs font-bold tracking-wide uppercase px-4 py-2 rounded-full mb-4 w-fit">
-                🦅 Our Motto: {{ $mottoMain }}
-            </div>
-            @else
-            <div class="inline-flex items-center gap-2 bg-white/10 text-white text-xs font-semibold px-4 py-2 rounded-full mb-4 w-fit">
-                🏫 Excellence in Education
+                {{ $heroBadge }}
             </div>
             @endif
             <h1 class="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-white leading-tight mb-5">
@@ -209,7 +210,7 @@ nav a { transition: color 0.15s; }
                 @if($school->motto && !empty($mottoRest))
                 <div class="hidden lg:block absolute top-3 left-3 z-10 bg-white/95 backdrop-blur rounded-xl shadow-lg p-4 max-w-[220px]">
                     <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:var(--primary)">
-                        🦅 {{ $mottoMain }}
+                        {{ trim($mottoIcon . ' ' . $mottoMain) }}
                     </p>
                     <ul class="space-y-1">
                         @foreach($mottoRest as $val)

@@ -46,6 +46,16 @@
                            class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none">
                 </div>
                 <div class="md:col-span-2">
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Hero Badge <span class="text-gray-400">(small label above the headline; leave empty to use the school motto)</span></label>
+                    <input type="text" name="hero_badge" value="{{ \App\Models\WebsiteSetting::get('hero_badge','') }}" placeholder="e.g. 🏫 Excellence in Education"
+                           class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Motto Icon <span class="text-gray-400">(optional emoji shown beside the school motto)</span></label>
+                    <input type="text" name="motto_icon" value="{{ \App\Models\WebsiteSetting::get('motto_icon','') }}" placeholder="e.g. 🌟" maxlength="8"
+                           class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none">
+                </div>
+                <div class="md:col-span-2">
                     <label class="block text-xs font-medium text-gray-600 mb-1">Subtext</label>
                     <textarea name="hero_subtext" rows="2" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none">{{ \App\Models\WebsiteSetting::get('hero_subtext') }}</textarea>
                 </div>
