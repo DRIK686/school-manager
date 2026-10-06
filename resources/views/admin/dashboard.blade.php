@@ -38,6 +38,10 @@
 </div>
 @endif
 
+@if($showFinance ?? false)
+@include('admin.dashboard_finance')
+@endif
+
 {{-- Stat cards --}}
 <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
     <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">

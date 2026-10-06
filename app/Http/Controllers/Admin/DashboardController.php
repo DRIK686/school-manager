@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\FeePayment;
 use App\Models\AcademicYear;
 use App\Models\StudentAttendance;
+use App\Services\FinanceSummary;
 
 class DashboardController extends Controller
 {
@@ -26,7 +27,6 @@ class DashboardController extends Controller
             $yearEndingSoon = $daysToYearEnd <= 30;
         }
 
-
         $stats = [
             'total_students'  => Student::where('is_active', true)->count(),
             'total_teachers'  => User::whereHas('role', fn($q) => $q->where('slug','teacher'))->where('is_active',true)->count(),
@@ -37,6 +37,23 @@ class DashboardController extends Controller
             'total_classes'   => \App\Models\SchoolClass::count(),
         ];
 
-        return view('admin.dashboard', compact('stats','school','year','yearEndingSoon','daysToYearEnd'));
+        // Finance block: admins and accountants only
+        $showFinance = in_array(auth()->user()->role?->slug, ['super_admin', 'admin', 'accountant'], true);
+        $fin = null;
+        if ($showFinance) {
+            $months  = (int) request('months') === 12 ? 12 : 6;
+            $monthly = FinanceSummary::monthly($months);
+            $fin = [
+                'months'   => $months,
+                'monthly'  => $monthly,
+                'expenses' => FinanceSummary::expenseByCategory($monthly['start'], now()->endOfMonth()->toDateString()),
+                'accounts' => FinanceSummary::accounts(),
+                'recent'   => FinanceSummary::recent(8),
+                'pending'  => FinanceSummary::pendingCount(),
+                'fees'     => FinanceSummary::feePosition(),
+            ];
+        }
+
+        return view('admin.dashboard', compact('stats','school','year','yearEndingSoon','daysToYearEnd','showFinance','fin'));
     }
 }
