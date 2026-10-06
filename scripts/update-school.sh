@@ -2,6 +2,7 @@
 # Update one school to a released version.
 # Usage:  bash ~/app/scripts/update-school.sh v1.2.1 [app_dir]     (app_dir defaults to ~/app)
 set -euo pipefail
+umask 022   # new files from git/composer get 644/755 (suPHP rejects group-writable PHP)
 TAG="${1:?usage: update-school.sh vX.Y.Z [app_dir]}"
 APP="${2:-$HOME/app}"
 cd "$APP"

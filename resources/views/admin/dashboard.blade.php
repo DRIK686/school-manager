@@ -78,7 +78,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-xs text-gray-500 font-semibold uppercase tracking-wide">Fees Collected</p>
-                <p class="text-3xl font-bold text-gray-900 mt-1">
+                <p class="text-xl 2xl:text-2xl font-bold text-gray-900 mt-1 break-words">
                     {{ $school->currency_symbol }}{{ number_format($stats['fees_collected'], 2) }}
                 </p>
                 <p class="text-xs text-gray-400 mt-1">{{ $year?->name }}</p>
