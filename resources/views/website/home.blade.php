@@ -432,7 +432,7 @@ nav a { transition: color 0.15s; }
             <h2 class="section-title mx-auto">{{ $ws->get('programs_headline') }}</h2>
             <p class="section-sub mx-auto text-center mt-2">{{ $ws->get('programs_subtext') }}</p>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid gap-6" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
             @foreach($programs as $program)
             <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-200 border border-gray-100 hover:-translate-y-1">
                 @if($program->image)
