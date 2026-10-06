@@ -70,3 +70,16 @@ nullable/defaulted columns) so existing schools update safely. Test every releas
 - Uploads over 100 MB fail behind Cloudflare (its body limit).
 - SSH to the server must use the server IP, not a Cloudflare-proxied domain.
 - `.env` changes not applied: `php artisan optimize:clear`.
+
+## One-command update (v1.2.1+)
+
+```bash
+bash ~/app/scripts/update-school.sh vX.Y.Z           # school with code in ~/app
+bash ~/app/scripts/update-school.sh vX.Y.Z /path/app # any other app folder
+```
+
+It refuses to run if tracked files have local edits, fetches tags, checks out the release,
+runs `composer install --no-dev -o`, `migrate --force`, `optimize:clear`, and then resets file
+permissions (PHP files 644, directories 755) so suPHP does not reject files that git wrote
+group-writable. If a school's folder cannot fetch from GitHub, fetch from another checkout first:
+`git fetch /home/raha/schoolmanager 'refs/tags/*:refs/tags/*'`.
