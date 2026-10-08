@@ -19,10 +19,22 @@ class TimetableController extends Controller
     {
         $user = auth()->user();
         if ($user->isTeacher()) {
-            $ids = ClassSubject::where('teacher_id', $user->id)->pluck('class_id')->unique();
+            $ids = ClassSubject::where('teacher_id', $user->id)->pluck('class_id')
+                ->merge(SchoolClass::where('class_teacher_id', $user->id)->pluck('id'))->unique();
             return SchoolClass::whereIn('id', $ids)->orderBy('numeric_order')->get();
         }
         return SchoolClass::orderBy('numeric_order')->get();
+    }
+
+    /** Admins edit any timetable; a teacher may edit only the class they are class teacher of. */
+    private function canEditClass($classId): bool
+    {
+        $user = auth()->user();
+        if (! $user->isTeacher()) {
+            return true;
+        }
+        return ! empty($classId)
+            && SchoolClass::where('id', $classId)->where('class_teacher_id', $user->id)->exists();
     }
 
     public function index(Request $request)
@@ -31,6 +43,9 @@ class TimetableController extends Controller
         $year     = AcademicYear::current();
         $classes  = $this->classesForUser();
         $classId  = $request->class_id  ?? $classes->first()?->id;
+        if (auth()->user()->isTeacher() && $classId && ! $classes->contains('id', (int) $classId)) {
+            abort(403, 'You can only view timetables for your own classes.');
+        }
         $sectionId= $request->section_id ?? null;
 
         $slots    = TimetableSlot::orderBy('slot_no')->get();
@@ -58,10 +73,11 @@ class TimetableController extends Controller
         $teachers = User::whereHas('role', fn($q) => $q->where('slug','teacher'))->orderBy('name')->get();
         $isTeacher = auth()->user()->isTeacher();
 
+        $canEdit = $this->canEditClass($classId);
         $view = $isTeacher ? 'teacher.timetable.index' : 'admin.timetable.index';
         return view($view, compact(
             'school','year','classes','classId','sectionId','sections',
-            'slots','days','grid','subjects','teachers','isTeacher'
+            'slots','days','grid','subjects','teachers','isTeacher','canEdit'
         ));
     }
 
@@ -71,6 +87,8 @@ class TimetableController extends Controller
             'class_id'         => 'required|exists:classes,id',
             'academic_year_id' => 'required|exists:academic_years,id',
         ]);
+
+        abort_unless($this->canEditClass($request->class_id), 403, 'Only the class teacher or an administrator may edit this timetable.');
 
         $yearId    = $request->academic_year_id;
         $classId   = $request->class_id;
@@ -121,6 +139,9 @@ class TimetableController extends Controller
         $year      = AcademicYear::current();
         $classes   = $this->classesForUser();
         $classId   = $request->class_id ?? $classes->first()?->id;
+        if (auth()->user()->isTeacher() && $classId && ! $classes->contains('id', (int) $classId)) {
+            abort(403, 'You can only view timetables for your own classes.');
+        }
         $sectionId = $request->section_id ?? null;
         $slots     = TimetableSlot::orderBy('slot_no')->get();
         $days      = [1=>'Monday',2=>'Tuesday',3=>'Wednesday',4=>'Thursday',5=>'Friday'];

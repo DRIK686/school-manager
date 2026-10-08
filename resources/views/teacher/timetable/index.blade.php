@@ -49,6 +49,11 @@
     </div>
     @else
 
+    @if(! $canEdit)
+    <div class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        View only. Only the class teacher or an administrator can change this timetable.
+    </div>
+    @endif
     {{-- Grid --}}
     <form method="POST" action="{{ route('admin.timetable.save') }}">
         @csrf
@@ -62,7 +67,7 @@
                     {{ $classes->firstWhere('id', $classId)?->name }} Timetable
                     — {{ $year?->name }}
                 </h2>
-                @if(!$isTeacher || true)
+                @if($canEdit)
                 <button type="submit"
                         class="px-4 py-2 text-white rounded-lg text-sm font-medium"
                         style="background:var(--sidebar-bg)">
@@ -107,11 +112,11 @@
                                        name="entries[{{ $dayNo }}][{{ $slot->id }}][custom_label]"
                                        value="{{ $entry?->custom_label ?? $slot->label }}"
                                        class="w-full px-2 py-1 text-xs rounded border border-amber-200 bg-amber-50 text-amber-800 focus:outline-none focus:ring-1"
-                                       placeholder="{{ $slot->label }}">
+                                       placeholder="{{ $slot->label }}" {{ $canEdit ? '' : 'disabled' }}>
                             @else
                                 {{-- Subject --}}
                                 <select name="entries[{{ $dayNo }}][{{ $slot->id }}][subject_id]"
-                                        class="w-full px-1 py-1 text-xs rounded border border-gray-200 focus:outline-none focus:ring-1 mb-1">
+                                        class="w-full px-1 py-1 text-xs rounded border border-gray-200 focus:outline-none focus:ring-1 mb-1" {{ $canEdit ? '' : 'disabled' }}>
                                     <option value="">—</option>
                                     @foreach($subjects as $subject)
                                     <option value="{{ $subject->id }}"
@@ -122,7 +127,7 @@
                                 </select>
                                 {{-- Teacher --}}
                                 <select name="entries[{{ $dayNo }}][{{ $slot->id }}][teacher_id]"
-                                        class="w-full px-1 py-1 text-xs rounded border border-gray-200 focus:outline-none focus:ring-1 text-gray-500">
+                                        class="w-full px-1 py-1 text-xs rounded border border-gray-200 focus:outline-none focus:ring-1 text-gray-500" {{ $canEdit ? '' : 'disabled' }}>
                                     <option value="">No teacher</option>
                                     @foreach($teachers as $teacher)
                                     <option value="{{ $teacher->id }}"
@@ -139,7 +144,7 @@
                 </tbody>
             </table>
 
-            <div class="px-5 py-3 border-t border-gray-100 flex justify-end">
+            <div class="px-5 py-3 border-t border-gray-100 flex justify-end {{ $canEdit ? '' : 'hidden' }}">
                 <button type="submit"
                         class="px-5 py-2 text-white rounded-lg text-sm font-medium"
                         style="background:var(--sidebar-bg)">
