@@ -1,6 +1,9 @@
 @php
     $c    = \App\Support\Theme::primary();
-    $on   = \App\Support\Theme::readable($c);
+    $hx   = ltrim($c, '#');
+    if (strlen($hx) === 3) { $hx = $hx[0].$hx[0].$hx[1].$hx[1].$hx[2].$hx[2]; }
+    [$r, $g, $b] = array_map('hexdec', str_split(substr($hx, 0, 6), 2));
+    $on   = (0.299 * $r + 0.587 * $g + 0.114 * $b) > 150 ? '#111827' : '#ffffff';
     $tint = \App\Support\Theme::tint($c, 0.92);
 @endphp
 <!doctype html>
