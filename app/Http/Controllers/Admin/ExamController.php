@@ -516,6 +516,7 @@ class ExamController extends Controller
     // Grade Scales
     public function gradeScales()
     {
+        if (auth()->user()->isTeacher()) abort(403, 'Only administrators manage grade scales.');
         $year   = AcademicYear::current();
         $scales = GradeScale::where('academic_year_id',$year?->id)->orderByDesc('min_mark')->get();
         return view('admin.exams.grades', compact('scales','year'));
@@ -523,6 +524,7 @@ class ExamController extends Controller
 
     public function storeGrade(Request $request)
     {
+        if (auth()->user()->isTeacher()) abort(403, 'Only administrators manage grade scales.');
         $request->validate([
             'grade'     => 'required|string|max:5',
             'min_mark'  => 'required|numeric|min:0|max:100',
@@ -539,6 +541,7 @@ class ExamController extends Controller
 
     public function destroyGrade(GradeScale $scale)
     {
+        if (auth()->user()->isTeacher()) abort(403, 'Only administrators manage grade scales.');
         $scale->delete();
         return back()->with('success', 'Grade removed.');
     }
@@ -574,6 +577,10 @@ class ExamController extends Controller
     // Save Term Report (conduct, remarks etc)
     public function saveTermReport(Request $request, ExamType $exam, Student $student)
     {
+        $user = auth()->user();
+        if ($user->isTeacher()) {
+            abort_unless($user->isClassTeacherOf($this->classIdForYear($student, $exam->academic_year_id)), 403, 'Only the class teacher may save term reports for this class.');
+        }
         $year = AcademicYear::current();
         \App\Models\StudentTermReport::updateOrCreate(
             [
