@@ -24,7 +24,11 @@ class GuideController extends Controller
     public function adminPdf()   { return $this->pdf($this->adminKey()); }
     public function teacher()    { return $this->page('teacher', 'guides.teacher', 'teacher.guide.pdf'); }
     public function teacherPdf() { return $this->pdf('teacher'); }
-    public function student()    { return $this->page('student', 'guides.student', 'student.guide.pdf'); }
+    public function student()
+    {
+        $student = \App\Models\Student::findOrFail(session('student_id'));
+        return $this->page('student', 'guides.student', 'student.guide.pdf', ['student' => $student]);
+    }
     public function studentPdf() { return $this->pdf('student'); }
 
     private function adminKey(): string
@@ -37,11 +41,11 @@ class GuideController extends Controller
         };
     }
 
-    private function page(string $key, string $view, string $pdfRoute)
+    private function page(string $key, string $view, string $pdfRoute, array $extra = [])
     {
         [$html, $toc] = $this->render($key);
 
-        return view($view, [
+        return view($view, $extra + [
             'title'  => self::TITLES[$key],
             'html'   => $html,
             'toc'    => $toc,
