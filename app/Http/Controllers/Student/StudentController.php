@@ -254,6 +254,21 @@ class StudentController extends Controller
                 ->pluck('avg_marks', 'exam_schedule_id');
             foreach ($marks as $mark) {
                 $mark->class_average = isset($liveAverages[$mark->exam_schedule_id]) ? round($liveAverages[$mark->exam_schedule_id], 2) : null;
+
+                // Stored grade/remark can be empty (marks saved before grade scales were fixed).
+                // Fall back to a live lookup in the exam's own year so students never see blanks.
+                if (!$mark->is_absent && $mark->marks_obtained !== null && empty($mark->grade)) {
+                    $maxMarks = (float) ($mark->examSchedule->max_marks ?? 100);
+                    if ($maxMarks > 0) {
+                        $gs = \App\Models\GradeScale::getGrade($mark->marks_obtained / $maxMarks * 100, $year?->id);
+                        if ($gs) {
+                            $mark->grade = $gs->grade;
+                            if (empty($mark->remarks)) {
+                                $mark->remarks = $gs->getAttribute('remark') ?? $gs->getAttribute('remarks');
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -375,6 +390,21 @@ class StudentController extends Controller
         $avg      = $schedules->count() > 0 ? round($total / max(1, $schedules->count()), 1) : 0;
         $grade    = \App\Models\GradeScale::getGrade($avg, $year?->id);
 
+        // Best / weakest subject for the performance summary (same as the admin report card)
+        $scoredMarks = $marks->where('is_absent', false)->whereNotNull('marks_obtained');
+        $highestMark = $scoredMarks->max('marks_obtained');
+        $lowestMark  = $scoredMarks->min('marks_obtained');
+
+        // Live class averages per subject
+        $liveAverages = \App\Models\StudentMark::whereIn('exam_schedule_id', $schedules->pluck('id'))
+            ->where('is_absent', false)->whereNotNull('marks_obtained')
+            ->selectRaw('exam_schedule_id, AVG(marks_obtained) as avg_marks')
+            ->groupBy('exam_schedule_id')
+            ->pluck('avg_marks', 'exam_schedule_id');
+        foreach ($marks as $scheduleId => $mark) {
+            $mark->class_average = isset($liveAverages[$scheduleId]) ? round($liveAverages[$scheduleId], 2) : null;
+        }
+
         $student->load(['schoolClass','section','academicYear']);
 
         // Get position in class — ranked against classmates from THAT year
@@ -400,8 +430,28 @@ class StudentController extends Controller
             ->where('academic_year_id', $year?->id)
             ->first();
 
+        // Term-by-term progress for the chart on the report card
+        $termComparison = \App\Models\ExamType::where('academic_year_id', $exam->academic_year_id)
+            ->where('is_published', true)
+            ->orderBy('created_at')
+            ->get()
+            ->map(function ($termExam) use ($student, $historicalClassId, $exam) {
+                $termSchedules = $termExam->schedules()->where('class_id', $historicalClassId)->get();
+                if ($termSchedules->isEmpty()) {
+                    return null;
+                }
+                $termMarks = \App\Models\StudentMark::where('student_id', $student->id)
+                    ->whereIn('exam_schedule_id', $termSchedules->pluck('id'))
+                    ->where('is_absent', false)->whereNotNull('marks_obtained')
+                    ->sum('marks_obtained');
+                $termAvg = round($termMarks / max(1, $termSchedules->count()), 1);
+                return ['name' => $termExam->name, 'avg' => $termAvg, 'is_current' => $termExam->id === $exam->id];
+            })
+            ->filter()
+            ->values();
+
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.exams.report_card_pdf', compact(
-            'exam','student','schedules','marks','total','maxTotal','avg','grade',
+            'exam','student','schedules','marks','total','maxTotal','avg','grade','highestMark','lowestMark','termComparison',
             'school','year','position','total_students','termReport','historicalClass'
         ))->setPaper('a4','portrait');
 
