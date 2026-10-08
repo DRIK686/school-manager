@@ -1,5 +1,6 @@
-@extends('layouts.admin')
+@extends(auth()->user()->hasRole('teacher') ? 'layouts.teacher' : 'layouts.admin')
 @section('title', $student->full_name . ' — Attendance')
+@section('page-title', $student->full_name . ' — Attendance')
 @section('content')
 
 <div class="mb-4">

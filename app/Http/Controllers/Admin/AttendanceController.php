@@ -87,8 +87,16 @@ class AttendanceController extends Controller
     // Monthly report
     public function report(Request $request)
     {
-        $classes   = SchoolClass::orderBy('numeric_order')->get();
+        $user      = auth()->user();
+        $isTeacher = $user->hasRole('teacher');
+        // A teacher sees (and may report on) only the classes they are class teacher of, same rule as mark().
+        $classes   = $isTeacher
+            ? SchoolClass::where('class_teacher_id', $user->id)->orderBy('numeric_order')->get()
+            : SchoolClass::orderBy('numeric_order')->get();
         $classId   = $request->class_id;
+        if ($isTeacher && $classId && ! $classes->contains('id', (int) $classId)) {
+            abort(403, 'You can only view reports for your own class.');
+        }
         $month     = $request->month ?? date('m');
         $year      = $request->year  ?? date('Y');
         $data      = collect();
@@ -137,12 +145,18 @@ class AttendanceController extends Controller
             });
         }
 
-        return view('admin.attendance.report', compact('classes','classId','month','year','data','daysInMonth'));
+        $school = \App\Models\SchoolSetting::first();
+        return view('admin.attendance.report', compact('classes','classId','month','year','data','daysInMonth','school'));
     }
 
     // Student attendance summary
     public function studentSummary(Request $request, Student $student)
     {
+        $user = auth()->user();
+        if ($user->hasRole('teacher')
+            && ! SchoolClass::where('class_teacher_id', $user->id)->where('id', $student->class_id)->exists()) {
+            abort(403, 'You can only view attendance for students in your own class.');
+        }
         $year   = AcademicYear::current();
         $month  = $request->month ?? date('m');
         $yr     = $request->year  ?? date('Y');
@@ -159,6 +173,7 @@ class AttendanceController extends Controller
         $total   = $records->count();
         $pct     = $total > 0 ? round(($present + $late) / $total * 100) : 0;
 
-        return view('admin.attendance.student', compact('student','records','present','absent','late','total','pct','month','yr'));
+        $school = \App\Models\SchoolSetting::first();
+        return view('admin.attendance.student', compact('student','records','present','absent','late','total','pct','month','yr','school'));
     }
 }
