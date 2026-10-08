@@ -46,6 +46,7 @@ class GuideController extends Controller
         [$html, $toc] = $this->render($key);
 
         return view($view, $extra + [
+            'school' => \App\Models\SchoolSetting::first(),
             'title'  => self::TITLES[$key],
             'html'   => $html,
             'toc'    => $toc,
