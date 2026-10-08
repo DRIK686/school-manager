@@ -341,3 +341,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','role:super_admin'])-
     Route::delete('/activity-logs/{log}', [App\Http\Controllers\Admin\ActivityLogController::class, 'destroy'])->name('activity-logs.destroy');
     Route::post('/activity-logs/purge', [App\Http\Controllers\Admin\ActivityLogController::class, 'purge'])->name('activity-logs.purge');
 });
+
+
+// ── User guides (each role sees only its own guide) ──────────────
+Route::prefix('admin/guide')->name('admin.guide.')->middleware(['auth','role:super_admin,admin,accountant'])->group(function () {
+    Route::get('/',    [App\Http\Controllers\GuideController::class, 'admin'])->name('show');
+    Route::get('/pdf', [App\Http\Controllers\GuideController::class, 'adminPdf'])->name('pdf');
+});
+Route::prefix('teacher/guide')->name('teacher.guide.')->middleware(['auth','role:teacher'])->group(function () {
+    Route::get('/',    [App\Http\Controllers\GuideController::class, 'teacher'])->name('show');
+    Route::get('/pdf', [App\Http\Controllers\GuideController::class, 'teacherPdf'])->name('pdf');
+});
+Route::prefix('student/guide')->name('student.guide.')->middleware('student.auth')->group(function () {
+    Route::get('/',    [App\Http\Controllers\GuideController::class, 'student'])->name('show');
+    Route::get('/pdf', [App\Http\Controllers\GuideController::class, 'studentPdf'])->name('pdf');
+});
