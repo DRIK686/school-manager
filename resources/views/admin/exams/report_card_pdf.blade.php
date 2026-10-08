@@ -8,7 +8,7 @@ body { font-family: Arial, sans-serif; font-size: 11px; color: #000; padding: 15
 
 .header { text-align:center; margin-bottom: 10px; }
 .header img { height: 80px; margin-bottom: 4px; }
-.header .school-name { font-size: 16px; font-weight: bold; text-transform: uppercase; color: #7f1d1d; }
+.header .school-name { font-size: 16px; font-weight: bold; text-transform: uppercase; color: {{ \App\Support\Theme::primary() }}; }
 .header .report-title { font-size: 13px; font-weight: bold; margin-top: 2px; }
 
 .info-wrap { display: table; width: 100%; }
@@ -169,7 +169,7 @@ table .num-col { text-align: center; }
             <td class="num-col" style="font-weight:bold">{{ number_format($marks->where('is_absent',false)->sum('sba_score'), 1) }}</td>
             <td class="num-col" style="font-weight:bold">{{ number_format($marks->where('is_absent',false)->sum('exam_score'), 1) }}</td>
             <td class="num-col" style="font-weight:bold">{{ number_format($total, 1) }}</td>
-            <td class="num-col" style="font-weight:bold;color:#7f1d1d">{{ $grade?->grade ?? '—' }}</td>
+            <td class="num-col" style="font-weight:bold;color:{{ \App\Support\Theme::primary() }}">{{ $grade?->grade ?? '—' }}</td>
             <td class="num-col"></td>
             <td></td>
         </tr>
@@ -199,7 +199,7 @@ table .num-col { text-align: center; }
                 <td class="num-col">{{ $highestMark !== null ? number_format($highestMark, 1) : '—' }}</td>
                 <td class="num-col">{{ $lowestMark !== null ? number_format($lowestMark, 1) : '—' }}</td>
                 <td class="num-col">{{ number_format($avg, 1) }}</td>
-                <td class="num-col" style="font-weight:bold; color:#7f1d1d">{{ $grade?->grade ?? '—' }}</td>
+                <td class="num-col" style="font-weight:bold; color:{{ \App\Support\Theme::primary() }}">{{ $grade?->grade ?? '—' }}</td>
             </tr>
         </tbody>
     </table>
@@ -215,7 +215,7 @@ table .num-col { text-align: center; }
         <tr>
             @foreach($termComparison as $t)
             <td style="border:none; text-align:center; vertical-align:bottom; height:110px; width:{{ number_format(100 / $termComparison->count(), 2) }}%;">
-                <div style="background:{{ $t['is_current'] ? '#7f1d1d' : '#c9a4a4' }}; height:{{ max(2, round($t['avg'])) }}px; margin:0 auto; width:36px;"></div>
+                <div style="background:{{ $t['is_current'] ? \App\Support\Theme::primary() : \App\Support\Theme::tint(null, 0.6) }}; height:{{ max(2, round($t['avg'])) }}px; margin:0 auto; width:36px;"></div>
             </td>
             @endforeach
         </tr>

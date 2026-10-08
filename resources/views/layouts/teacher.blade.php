@@ -8,7 +8,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <style>
 :root {
-  --sidebar-bg: {{ $school->sidebar_color ?? '#7f1d1d' }};
+  --sidebar-bg: {{ $school->sidebar_color ?? '#0f766e' }};
   --accent:     {{ $school->accent_color  ?? '#b91c1c' }};
 }
 .sidebar-bg  { background-color: var(--sidebar-bg); }

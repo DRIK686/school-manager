@@ -224,7 +224,7 @@
                 {{-- Marks table --}}
                 <table class="w-full text-xs border-collapse mb-3">
                     <thead>
-                        <tr style="background:#7f1d1d;color:white">
+                        <tr style="background:var(--sidebar-bg);color:white">
                             <th class="border border-gray-300 px-2 py-1 text-left">Subject</th>
                             <th class="border border-gray-300 px-2 py-1 text-center">SBA 50%</th>
                             <th class="border border-gray-300 px-2 py-1 text-center">Exam 50%</th>
@@ -242,7 +242,7 @@
                             <td class="border border-gray-200 px-2 py-1 text-center">{{ $mark->is_absent ? 'ABS' : ($mark->sba_score ?? '—') }}</td>
                             <td class="border border-gray-200 px-2 py-1 text-center">{{ $mark->is_absent ? 'ABS' : ($mark->exam_score ?? '—') }}</td>
                             <td class="border border-gray-200 px-2 py-1 text-center font-bold">{{ $mark->is_absent ? 'ABS' : ($mark->marks_obtained ?? '—') }}</td>
-                            <td class="border border-gray-200 px-2 py-1 text-center font-bold" style="color:#7f1d1d">{{ $mark->grade ?? '—' }}</td>
+                            <td class="border border-gray-200 px-2 py-1 text-center font-bold" style="color:var(--sidebar-bg)">{{ $mark->grade ?? '—' }}</td>
                             <td class="border border-gray-200 px-2 py-1 text-center">{{ $mark->class_average ?? '—' }}</td>
                             <td class="border border-gray-200 px-2 py-1">{{ $mark->remarks ?? '—' }}</td>
                         </tr>

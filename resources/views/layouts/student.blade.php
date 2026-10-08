@@ -7,7 +7,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <style>
-:root { --sidebar-bg: {{ $school->sidebar_color ?? '#7f1d1d' }}; --accent: {{ $school->accent_color ?? '#b91c1c' }}; }
+:root { --sidebar-bg: {{ $school->sidebar_color ?? '#0f766e' }}; --accent: {{ $school->accent_color ?? '#14b8a6' }}; }
 .sidebar-bg { background-color: var(--sidebar-bg); }
 .sidebar-link { display:flex;align-items:center;gap:10px;padding:9px 16px;border-radius:8px;font-size:14px;color:rgba(255,255,255,0.75);transition:all .15s; }
 .sidebar-link:hover,.sidebar-link.active { background:rgba(255,255,255,0.15);color:#fff; }

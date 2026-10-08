@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Student Login — {{ $school->school_name ?? 'SchoolManager' }}</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<style>:root{--sidebar-bg:{{ $school->sidebar_color ?? '#7f1d1d' }};}</style>
+<style>:root{--sidebar-bg:{{ $school->sidebar_color ?? '#0f766e' }};}</style>
 @include('partials.favicon')
 </head>
 <body class="min-h-screen bg-gray-50 flex items-center justify-center p-4">

@@ -10,14 +10,14 @@ h1 { font-size: 15px; text-align: center; margin-bottom: 2px; }
 .sub { text-align: center; color: #666; font-size: 11px; margin-bottom: 12px; }
 table { width: 100%; border-collapse: collapse; }
 th, td { border: 1px solid #ccc; padding: 5px 6px; text-align: center; vertical-align: middle; }
-th { background: #7f1d1d; color: white; font-size: 11px; }
+th { background: {{ \App\Support\Theme::primary() }}; color: white; font-size: 11px; }
 .time-col { text-align: left; font-size: 10px; color: #555; min-width: 90px; }
 .break-row td { background: #fef3c7; color: #92400e; font-weight: bold; }
 .subject { font-weight: bold; font-size: 11px; }
 .teacher { font-size: 9px; color: #666; margin-top: 2px; }
 .filter-bar { margin-bottom: 12px; }
 .filter-bar select { padding: 4px 8px; font-size: 12px; border: 1px solid #ccc; border-radius: 4px; }
-.filter-bar button { padding: 4px 12px; font-size: 12px; background: #7f1d1d; color: white; border: none; border-radius: 4px; cursor: pointer; }
+.filter-bar button { padding: 4px 12px; font-size: 12px; background: {{ \App\Support\Theme::primary() }}; color: white; border: none; border-radius: 4px; cursor: pointer; }
 @media print {
     .filter-bar, .no-print { display: none; }
     body { padding: 10px; }
@@ -45,7 +45,7 @@ th { background: #7f1d1d; color: white; font-size: 11px; }
         @endif
         <button type="button" onclick="window.print()">🖨 Print</button>
         <a href="{{ route('admin.timetable.index', ['class_id' => $classId]) }}"
-           style="font-size:12px;color:#7f1d1d;">← Back to Edit</a>
+           style="font-size:12px;color:{{ \App\Support\Theme::primary() }};">← Back to Edit</a>
     </form>
 </div>
 
