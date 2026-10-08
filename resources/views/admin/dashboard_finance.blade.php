@@ -144,6 +144,39 @@
     </div>
 </div>
 
+@if(!empty($fin['budget']))
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
+    <div class="flex items-center justify-between mb-4">
+        <div>
+            <h3 class="font-semibold text-gray-800 text-sm">Budget watch &middot; {{ $fin['budget']['year']->name }}</h3>
+            <p class="text-xs text-gray-400 mt-0.5">
+                @if($fin['budget']['flagged'] > 0)
+                    {{ $fin['budget']['flagged'] }} of {{ $fin['budget']['total'] }} budget line{{ $fin['budget']['total'] == 1 ? '' : 's' }} at or above 80%
+                @else
+                    All {{ $fin['budget']['total'] }} budget line{{ $fin['budget']['total'] == 1 ? '' : 's' }} within limits
+                @endif
+            </p>
+        </div>
+        <a href="{{ $link('admin.finance.budget') }}" class="text-xs font-medium" style="color:var(--sidebar-bg)">Open budget &rarr;</a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+        @foreach($fin['budget']['rows'] as $b)
+        @php
+            $barColor = $b['state'] === 'over' ? '#b91c1c' : ($b['state'] === 'near' ? '#d97706' : 'var(--sidebar-bg)');
+            $label = $b['state'] === 'over' ? 'Over budget' : ($b['state'] === 'near' ? 'Near limit' : null);
+        @endphp
+        <div>
+            <div class="flex items-center justify-between text-xs mb-1">
+                <span class="font-medium text-gray-700">{{ $b['name'] }}</span>
+                <span class="text-gray-500">{{ $fmt($b['spent']) }} of {{ $fmt($b['budget']) }} &middot; <strong class="text-gray-800">{{ $b['pct'] }}%</strong>@if($label) &middot; <strong style="color:{{ $barColor }}">{{ $label }}</strong>@endif</span>
+            </div>
+            <div class="h-2.5 rounded-full bg-gray-100 overflow-hidden"><div class="h-2.5 rounded-full" style="width:{{ min(100, $b['pct']) }}%;background:{{ $barColor }}"></div></div>
+        </div>
+        @endforeach
+    </div>
+</div>
+@endif
+
 <h3 class="text-sm font-semibold text-gray-700 mb-3">School at a glance</h3>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>

@@ -51,6 +51,7 @@ class DashboardController extends Controller
                 'recent'   => FinanceSummary::recent(8),
                 'pending'  => FinanceSummary::pendingCount(),
                 'fees'     => FinanceSummary::feePosition(),
+                'budget'   => FinanceSummary::budgetWatch(),
             ];
         }
 

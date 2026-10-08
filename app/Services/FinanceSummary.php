@@ -136,4 +136,42 @@ class FinanceSummary
 
         return $out;
     }
+
+    /** Spend against budget per expense category for the current year (same rules as the Budget page). */
+    public static function budgetWatch(int $limit = 6): array
+    {
+        $year = \App\Models\AcademicYear::current() ?? \App\Models\AcademicYear::orderByDesc('start_date')->first();
+        if (! $year) { return []; }
+        $from = $year->start_date ? \Carbon\Carbon::parse($year->start_date) : now()->startOfYear();
+        $to   = $year->end_date ? \Carbon\Carbon::parse($year->end_date) : now()->endOfYear();
+        $budgets = \Illuminate\Support\Facades\DB::table('finance_budgets')
+            ->where('academic_year_id', $year->id)->where('amount', '>', 0)
+            ->pluck('amount', 'finance_category_id');
+        if ($budgets->isEmpty()) { return []; }
+        $actual = \App\Models\FinanceTransaction::active()->where('type', 'expense')
+            ->whereBetween('txn_date', [$from->toDateString(), $to->toDateString()])
+            ->selectRaw('finance_category_id, SUM(amount) as a')->groupBy('finance_category_id')
+            ->pluck('a', 'finance_category_id');
+        $names = \App\Models\FinanceCategory::whereIn('id', $budgets->keys())->pluck('name', 'id');
+        $rows = [];
+        foreach ($budgets as $catId => $amount) {
+            $budget = (float) $amount;
+            $spent  = (float) ($actual[$catId] ?? 0);
+            $pct    = $budget > 0 ? (int) round($spent / $budget * 100) : 0;
+            $rows[] = [
+                'name'   => $names[$catId] ?? ('Category #' . $catId),
+                'budget' => $budget,
+                'spent'  => $spent,
+                'pct'    => $pct,
+                'state'  => $pct >= 100 ? 'over' : ($pct >= 80 ? 'near' : 'ok'),
+            ];
+        }
+        usort($rows, fn($a, $b) => $b['pct'] <=> $a['pct']);
+        return [
+            'year'    => $year,
+            'rows'    => array_slice($rows, 0, $limit),
+            'total'   => count($rows),
+            'flagged' => count(array_filter($rows, fn($r) => $r['state'] !== 'ok')),
+        ];
+    }
 }
