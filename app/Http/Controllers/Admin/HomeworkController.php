@@ -64,9 +64,11 @@ class HomeworkController extends Controller
         ]);
 
         $subjectAssigned = ClassSubject::where('class_id', $request->class_id)
-            ->where('subject_id', $request->subject_id)->exists();
+            ->where('subject_id', $request->subject_id)
+            ->when(auth()->user()->isTeacher(), fn($q) => $q->where('teacher_id', auth()->id()))
+            ->exists();
         if (!$subjectAssigned) {
-            return back()->withErrors(['subject_id' => 'That subject is not assigned to the selected class.'])->withInput();
+            return back()->withErrors(['subject_id' => (auth()->user()->isTeacher() ? 'You are not assigned to teach that subject in the selected class.' : 'That subject is not assigned to the selected class.')])->withInput();
         }
 
         Homework::create([
