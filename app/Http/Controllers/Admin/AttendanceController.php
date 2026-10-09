@@ -16,7 +16,7 @@ class AttendanceController extends Controller
     {
         $user = auth()->user();
         if ($user->isTeacher()) {
-            $myClassIds = SchoolClass::where('class_teacher_id', $user->id)->pluck('id');
+            $myClassIds = $user->teachingClassIds();
             $classes = SchoolClass::whereIn('id', $myClassIds)->orderBy('numeric_order')->get();
         } else {
             $classes = SchoolClass::orderBy('numeric_order')->get();
@@ -26,6 +26,9 @@ class AttendanceController extends Controller
         $existing = collect();
         $date     = $request->date ?? date('Y-m-d');
         $classId  = $request->class_id;
+        if ($user->isTeacher() && $classId && ! $classes->contains('id', (int) $classId)) {
+            abort(403, 'You can only mark attendance for classes you teach.');
+        }
         $sectionId= $request->section_id;
 
         if ($classId) {
@@ -59,8 +62,8 @@ class AttendanceController extends Controller
 
         // Authorization: only the class teacher (or admin) may mark attendance.
         $user = auth()->user();
-        if ($user->isTeacher() && !$user->isClassTeacherOf($request->class_id)) {
-            return back()->with('error', 'Only the class teacher may mark attendance for this class.');
+        if ($user->isTeacher() && !$user->teachesClass((int) $request->class_id)) {
+            return back()->with('error', 'You can only mark attendance for classes you teach.');
         }
 
         $year = AcademicYear::current();
@@ -91,7 +94,7 @@ class AttendanceController extends Controller
         $isTeacher = $user->hasRole('teacher');
         // A teacher sees (and may report on) only the classes they are class teacher of, same rule as mark().
         $classes   = $isTeacher
-            ? SchoolClass::where('class_teacher_id', $user->id)->orderBy('numeric_order')->get()
+            ? SchoolClass::whereIn('id', $user->teachingClassIds())->orderBy('numeric_order')->get()
             : SchoolClass::orderBy('numeric_order')->get();
         $classId   = $request->class_id;
         if ($isTeacher && $classId && ! $classes->contains('id', (int) $classId)) {
@@ -154,7 +157,7 @@ class AttendanceController extends Controller
     {
         $user = auth()->user();
         if ($user->hasRole('teacher')
-            && ! SchoolClass::where('class_teacher_id', $user->id)->where('id', $student->class_id)->exists()) {
+            && ! $user->teachesClass((int) $student->class_id)) {
             abort(403, 'You can only view attendance for students in your own class.');
         }
         $year   = AcademicYear::current();

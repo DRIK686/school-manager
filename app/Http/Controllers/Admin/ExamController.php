@@ -224,7 +224,7 @@ class ExamController extends Controller
     {
         $user = auth()->user();
         if ($user->isTeacher()) {
-            $myClassIds = SchoolClass::where('class_teacher_id', $user->id)->pluck('id');
+            $myClassIds = $user->teachingClassIds();
             $classes = SchoolClass::whereIn('id', $myClassIds)->orderBy('numeric_order')->get();
         } else {
             $classes = SchoolClass::orderBy('numeric_order')->get();
@@ -233,7 +233,7 @@ class ExamController extends Controller
         $results  = collect();
 
         if ($classId && $user->isTeacher()) {
-            abort_unless($user->isClassTeacherOf($classId), 403, 'Only the class teacher may view compiled results for this class.');
+            abort_unless($user->teachesClass((int) $classId), 403, 'You can only view results for classes you teach.');
         }
 
         if ($classId) {
@@ -310,7 +310,7 @@ class ExamController extends Controller
         // compiled report cards for this class.
         $user = auth()->user();
         if ($user->isTeacher()) {
-            abort_unless($user->isClassTeacherOf($historicalClassId), 403, 'Only the class teacher may view report cards for this class.');
+            abort_unless($user->teachesClass((int) $historicalClassId), 403, 'You can only view report cards for classes you teach.');
         }
         $historicalClass    = SchoolClass::find($historicalClassId);
 
@@ -579,7 +579,7 @@ class ExamController extends Controller
     {
         $user = auth()->user();
         if ($user->isTeacher()) {
-            abort_unless($user->isClassTeacherOf($this->classIdForYear($student, $exam->academic_year_id)), 403, 'Only the class teacher may save term reports for this class.');
+            abort_unless($user->teachesClass((int) $this->classIdForYear($student, $exam->academic_year_id)), 403, 'You can only save term reports for classes you teach.');
         }
         $year = AcademicYear::current();
         \App\Models\StudentTermReport::updateOrCreate(

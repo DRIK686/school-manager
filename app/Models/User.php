@@ -32,6 +32,19 @@ class User extends Authenticatable {
     public function isTeacher(): bool { return $this->hasRole('teacher'); }
     public function isClassTeacherOf(int $classId): bool { return SchoolClass::where('id', $classId)->where('class_teacher_id', $this->id)->exists(); }
 
+    /** Class IDs this teacher is connected to: class teacher of, or assigned a subject in. */
+    public function teachingClassIds(): \Illuminate\Support\Collection
+    {
+        return SchoolClass::where('class_teacher_id', $this->id)->pluck('id')
+            ->merge(ClassSubject::where('teacher_id', $this->id)->pluck('class_id'))
+            ->map(fn ($i) => (int) $i)->unique()->values();
+    }
+
+    public function teachesClass(int $classId): bool
+    {
+        return $this->teachingClassIds()->contains($classId);
+    }
+
     protected static function boot()
     {
         parent::boot();
