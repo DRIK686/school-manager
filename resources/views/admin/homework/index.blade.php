@@ -36,6 +36,12 @@
                         {{ $hw->schoolClass->name }} · {{ $hw->subject->name }} · {{ $hw->teacher->name }}
                         · Due {{ $hw->due_date->format('d M Y') }}
                     </p>
+                    @if($hw->attachment_path)
+                    <a href="{{ asset('storage/'.$hw->attachment_path) }}" target="_blank" class="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:underline mt-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.414a4 4 0 00-5.656-5.656l-6.415 6.415a6 6 0 108.486 8.486L20.5 13"/></svg>
+                        {{ $hw->attachment_name ?? 'Attachment' }}
+                    </a>
+                    @endif
                     @if($hw->description)<p class="text-sm text-gray-600 mt-1">{{ Str::limit($hw->description,100) }}</p>@endif
                 </div>
                 <div class="flex gap-2">

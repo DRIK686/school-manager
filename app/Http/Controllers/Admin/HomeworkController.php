@@ -61,6 +61,7 @@ class HomeworkController extends Controller
             'title'      => 'required|string|max:255',
             'due_date'   => 'required|date',
             'description'=> 'nullable|string',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,jpeg,png|max:10240',
         ]);
 
         $subjectAssigned = ClassSubject::where('class_id', $request->class_id)
@@ -71,7 +72,16 @@ class HomeworkController extends Controller
             return back()->withErrors(['subject_id' => (auth()->user()->isTeacher() ? 'You are not assigned to teach that subject in the selected class.' : 'That subject is not assigned to the selected class.')])->withInput();
         }
 
-        Homework::create([
+        $attachment = ['attachment_path' => null, 'attachment_name' => null];
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $attachment = [
+                'attachment_path' => $file->store('homework/attachments', 'public'),
+                'attachment_name' => $file->getClientOriginalName(),
+            ];
+        }
+
+        Homework::create($attachment + [
             'class_id'        => $request->class_id,
             'subject_id'      => $request->subject_id,
             'teacher_id'      => auth()->id(),
@@ -89,6 +99,9 @@ class HomeworkController extends Controller
     {
         $user = auth()->user();
         if ($user->isTeacher() && $homework->teacher_id !== $user->id) abort(403);
+        if ($homework->attachment_path) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($homework->attachment_path);
+        }
         $homework->delete();
         return back()->with('success', 'Homework deleted.');
     }

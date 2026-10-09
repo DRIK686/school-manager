@@ -5,7 +5,7 @@
 <div class="max-w-xl">
     <a href="{{ route('teacher.homework.index') }}" class="text-sm text-gray-500 mb-4 inline-block">← Back</a>
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-        <form method="POST" action="{{ route('teacher.homework.store') }}" class="space-y-4">
+        <form method="POST" action="{{ route('teacher.homework.store') }}" class="space-y-4" enctype="multipart/form-data">
             @csrf
             <div class="grid grid-cols-2 gap-4">
                 <div>
@@ -45,6 +45,13 @@
                 <textarea name="description" rows="4"
                           class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none"
                           placeholder="Additional details...">{{ old('description') }}</textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Attach a file <span class="text-gray-400 font-normal">(optional: PDF, Word, PowerPoint, Excel or photo, max 10 MB)</span></label>
+                <input type="file" name="attachment" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png"
+                    class="w-full text-sm text-gray-600 border border-gray-200 rounded-lg file:mr-3 file:py-2 file:px-4 file:border-0 file:bg-gray-100 file:text-sm">
+                @error('attachment')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>
             <div class="flex gap-3 pt-2">
                 <button type="submit" class="px-5 py-2 text-white rounded-lg text-sm font-medium" style="background:var(--sidebar-bg)">Post Homework</button>
