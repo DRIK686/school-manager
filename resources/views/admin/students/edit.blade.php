@@ -122,6 +122,63 @@
                 </div>
             </div>
         </div>
+
+        {{-- Previous School --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h3 class="text-sm font-semibold text-gray-800 mb-4">Previous School (Optional)</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Previous School Name</label>
+                    <input type="text" name="previous_school" value="{{ old('previous_school', $student->previous_school) }}"
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Previous Class/Grade</label>
+                    <input type="text" name="previous_class" value="{{ old('previous_class', $student->previous_class) }}"
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2">
+                </div>
+            </div>
+        </div>
+
+        {{-- Parent/Guardian (edits the first guardian record) --}}
+        @php $guardian = $student->parents->sortBy('id')->first(); @endphp
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h3 class="text-sm font-semibold text-gray-800 mb-4">Parent / Guardian</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Full Name</label>
+                    <input type="text" name="parent_name" value="{{ old('parent_name', $guardian?->full_name) }}"
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 @error('parent_name') border-red-400 @enderror">
+                    @error('parent_name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Relation</label>
+                    @php $rel = old('parent_relation', $guardian?->relation); @endphp
+                    <select name="parent_relation" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2">
+                        <option value="father" {{ $rel == 'father' ? 'selected' : '' }}>Father</option>
+                        <option value="mother" {{ $rel == 'mother' ? 'selected' : '' }}>Mother</option>
+                        <option value="guardian" {{ $rel == 'guardian' ? 'selected' : '' }}>Guardian</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Phone</label>
+                    <input type="text" name="parent_phone" value="{{ old('parent_phone', $guardian?->phone) }}"
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 @error('parent_phone') border-red-400 @enderror">
+                    @error('parent_phone')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Email</label>
+                    <input type="email" name="parent_email" value="{{ old('parent_email', $guardian?->email) }}"
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2">
+                    @error('parent_email')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Occupation</label>
+                    <input type="text" name="parent_occupation" value="{{ old('parent_occupation', $guardian?->occupation) }}"
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2">
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="space-y-6">

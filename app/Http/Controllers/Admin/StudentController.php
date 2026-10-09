@@ -122,12 +122,22 @@ class StudentController extends Controller
             'class_id'       => 'required|exists:classes,id',
             'profile_photo'  => 'nullable|image|max:2048',
         ];
+        $rules += [
+            'previous_school'   => 'nullable|string|max:200',
+            'previous_class'    => 'nullable|string|max:100',
+            'parent_name'       => 'nullable|required_with:parent_phone|string|max:200',
+            'parent_phone'      => 'nullable|required_with:parent_name|string|max:20',
+            'parent_relation'   => 'nullable|in:father,mother,guardian',
+            'parent_email'      => 'nullable|email|max:200',
+            'parent_occupation' => 'nullable|string|max:100',
+        ];
         if (auth()->user()->isAdmin()) {
             $rules['admission_no'] = 'required|string|max:50|unique:students,admission_no,' . $student->id;
         }
         $request->validate($rules);
 
-        $data = $request->except(['_token','_method','profile_photo']);
+        $parentFields = ['parent_name','parent_relation','parent_phone','parent_email','parent_occupation'];
+        $data = $request->except(array_merge(['_token','_method','profile_photo'], $parentFields));
         if (!auth()->user()->isAdmin()) {
             unset($data['admission_no']);
         }
@@ -137,6 +147,20 @@ class StudentController extends Controller
         }
 
         $student->update($data);
+
+        // Guardian: edit the first existing record (or create one if the student has none).
+        if ($request->filled('parent_name')) {
+            $attrs = [
+                'relation'   => $request->parent_relation ?: 'guardian',
+                'full_name'  => $request->parent_name,
+                'phone'      => $request->parent_phone,
+                'email'      => $request->parent_email ?: null,
+                'occupation' => $request->parent_occupation ?: null,
+            ];
+            $parent = $student->parents()->orderBy('id')->first();
+            $parent ? $parent->update($attrs) : $student->parents()->create($attrs);
+        }
+
         return redirect()->route('admin.students.show', $student)->with('success', 'Student updated successfully.');
     }
 
